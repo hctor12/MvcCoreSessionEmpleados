@@ -55,12 +55,31 @@ else
     {
         <li class="list-group-item list-group-item-info">
             @empleado.Apellido
+
+            @if(favoritos == null){
             <a asp-controller="Empleados" asp-action="SessionEmpleadosV5"
-            asp-route-idfavorito="@empleado.IdEmpleado">Favorito</a>
+               asp-route-idfavorito="@empleado.IdEmpleado" class="btn btn-info">Favorito</a>
+            }
+            else
+            {
+                Empleado empFavorito = favoritos.Find(x => x.IdEmpleado == empleado.IdEmpleado);
+
+                if(empFavorito == null)
+                {
+                    <a asp-controller="Empleados" asp-action="SessionEmpleadosV5"
+                       asp-route-idfavorito="@empleado.IdEmpleado" class="btn btn-info">Favorito</a>
+                }
+                else
+                {       
+                    <img src="/images/ok.png" style="width: 40px; height: 40px" />
+                }
+            }
+
+
             @if(ids == null)
             {
                 <a asp-controller="Empleados"
-                   asp-action="SessionEmpleadosV5" class="btn btn-outline-danger"
+                   asp-action="SessionEmpleadosV5" class="btn btn-light"
                    asp-route-idempleado="@empleado.IdEmpleado">
                     Almacenar empleado
                 </a>
@@ -74,7 +93,7 @@ else
                 else
                 {
                     <a asp-controller="Empleados"
-                       asp-action="SessionEmpleadosV5" class="btn btn-outline-danger"
+                       asp-action="SessionEmpleadosV5" class="btn btn-light"
                        asp-route-idempleado="@empleado.IdEmpleado">
                         Almacenar empleado
                     </a>

@@ -24,16 +24,25 @@
                 <th>Oficio</th>
                 <th>Salario</th>
                 <th>Departamento</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in favoritos)
             {
                 <tr>
                     <td>@item.Apellido</td>
                     <td>@item.Oficio</td>
                     <td>@item.Salario</td>
                     <td>@item.IdDepartamento</td>
+                    <td>
+                        <a asp-controller="Empleados"
+                           asp-action="EmpleadosFavoritos"
+                           asp-route-ideliminar="@item.IdEmpleado"
+                           class="btn btn-warning">
+                            Delete
+                        </a>
+                    </td>
                 </tr>
             }
         </tbody>

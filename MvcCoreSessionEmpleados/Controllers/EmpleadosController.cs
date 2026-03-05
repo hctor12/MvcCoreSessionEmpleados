@@ -3,7 +3,6 @@ using Microsoft.Extensions.Caching.Memory;
 using MvcCoreSessionEmpleados.Extensions;
 using MvcCoreSessionEmpleados.Models;
 using MvcCoreSessionEmpleados.Repositories;
-using System.Threading.Tasks;
 
 namespace MvcCoreSessionEmpleados.Controllers
 {
@@ -175,7 +174,7 @@ namespace MvcCoreSessionEmpleados.Controllers
             }
             else
             {
-                List<Empleado> empleados = await 
+                List<Empleado> empleados = await
                     this.repo.GetEmpleadosNotSessionAsync(idsEmpleados);
                 return View(empleados);
             }
@@ -215,7 +214,7 @@ namespace MvcCoreSessionEmpleados.Controllers
                 }
                 Empleado empleadoFavorito = await this.repo.FindEmpleadoAsync(idfavorito.Value);
                 empleadosFavoritos.Add(empleadoFavorito);
-                this.memoryCache.Set("FAVORITOS", empleadosFavoritos);  
+                this.memoryCache.Set("FAVORITOS", empleadosFavoritos);
             }
 
 
@@ -246,16 +245,23 @@ namespace MvcCoreSessionEmpleados.Controllers
             return View(empleados);
         }
 
-        public IActionResult EmpleadosFavoritos() {
-            if (this.memoryCache.Get("FAVORITOS") == null)
+        public IActionResult EmpleadosFavoritos(int? ideliminar)
+        {
+            if (ideliminar != null)
             {
-                ViewData["MENSAJE"] = "No tenemos empleados favoritos";
-                return View();
+                List<Empleado> empFavoritos = this.memoryCache.Get<List<Empleado>>("FAVORITOS");
+                Empleado delete = empFavoritos.Find(z => z.IdEmpleado == ideliminar.Value);
+                empFavoritos.Remove(delete);
+                if (empFavoritos.Count == 0)
+                {
+                    this.memoryCache.Remove("FAVORITOS");
+                }
+                else
+                {
+                    this.memoryCache.Set("FAVORITOS", empFavoritos);
+                }
             }
-            else {
-                List<Empleado> favoritos = this.memoryCache.Get<List<Empleado>>("FAVORITOS");
-            return View(favoritos);
-            } 
+            return View();
         }
 
         public async Task<IActionResult> EmpleadosAlmacenadosV5(int? ideliminar)
@@ -267,10 +273,10 @@ namespace MvcCoreSessionEmpleados.Controllers
             {
                 ViewData["MENSAJE"] = "No existen empleados en Session";
                 return View();
-            }   
+            }
             else
             {
-                if(ideliminar != null)
+                if (ideliminar != null)
                 {
                     idsEmpleados.Remove(ideliminar.Value);
                     if (idsEmpleados.Count == 0)
@@ -278,7 +284,8 @@ namespace MvcCoreSessionEmpleados.Controllers
                         HttpContext.Session.Remove("IDSEMPLEADOS");
                         return View();
                     }
-                    else {
+                    else
+                    {
                         HttpContext.Session.SetObject("IDSEMPLEADOS", idsEmpleados);
                     }
                 }
